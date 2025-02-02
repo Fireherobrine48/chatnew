@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paxi Chatroom</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+  <style>
+    /* Inline styles specific to the sign-up page */
+    #defaultUserIcon {
+      margin: 10px auto;
+      width: 120px;
+      height: 120px;
+      background: #f8f8f8;
+      border: 5px solid #999fa3;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2), inset 0px 2px 4px rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/480px-User_icon_2.svg.png');
+      background-size: cover;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    #signupMicrosoft {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(to bottom, #0078d7, #005b9f);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    #signupMicrosoft:hover {
+      background: linear-gradient(to bottom, #005b9f, #003f73);
+    }
+
+    /* Make the username input field look like the dropdown */
+    #usernameInput {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      padding: 10px 15px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin: 10px auto;
+      box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style the profile picture input as a button */
+    #profilePicButton {
+      display: inline-block;
+      background: linear-gradient(to bottom, #4CAF50, #357A38);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      margin: 10px auto;
+    }
+
+    #profilePicButton:hover {
+      background: linear-gradient(to bottom, #357A38, #2C5F2D);
+    }
+
+    /* Hide the default file input */
+    #profilePicInput {
+      display: none;
+    }
+
+    /* Add margin to the Join Chat button */
+    button[onclick="joinChat()"] {
+      margin-top: 20px;
+    }
+
+    /* Style for Paxi Chat text */
+    .paxi-title {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* New style for typing indicator */
+    #typingIndicator {
+      font-style: italic;
+      color: #FFD700;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="login">
+    <div class="paxi-title">Paxi Chat</div>
+    <div id="defaultUserIcon"></div>
+    <button id="signupMicrosoft">Sign up with Microsoft (Beta) </button>
+    <h2>🌐 Enter the Chatroom!</h2>
+    <input id="usernameInput" type="text" placeholder="Enter your username">
+    <select id="languageSelect">
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="fr">Français</option>
+      <option value="gr">Greek</option>
+    </select>
+    <label id="profilePicButton" for="profilePicInput">Choose Profile Picture</label>
+    <input id="profilePicInput" type="file" accept="image/*">
+    <button onclick="joinChat()">Join Chat</button>
+    <p style="color:rgb(212, 201, 100);">⚠️This is a Developer Preview⚠️.</p>
+    <p class="login-footer">Paxi Chat 2025 - Privacy Matters - Developer Preview - Milestone 2.1 </p>
+  </div>
+
+  <div id="chatroom" style="display: none;">
+    <div class="header">
+      <h2>
+        Welcome to the Chatroom 
+        <small id="userCount">(0 users online)</small>
+      </h2>
+      <div id="currentUser">Logged in as: <span></span></div>
+      <button onclick="leaveChat()">Leave Chat</button>
+    </div>
+    <div id="chat">
+      <div id="messages"></div>
+      <!-- Typing indicator here -->
+      <div id="typingIndicator"></div>
+    </div>
+    <div class="footer">
+      <input id="messageInput" type="text" placeholder="Type a message..." oninput="showTypingIndicator()">
+      <div>
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="sendImage()">Send Image</button>
+        <input type="file" id="fileInput" accept=".txt,.py,.html,.js,.pyw,.jar,.css,.cpp,.png,.jpg,.jpeg.,webp,.md,.bat,.json,.webp,.svg,.wav,.mp4,.mp3,.bmp,.dll,.exe" />
+        <button onclick="sendFile()">Send File</button>
+      </div>
+      <p class="footer-text">Paxi Chat Alpha 2.1</p>
+    </div>
+  </div>
+
+  <script>
+    const profilePicInput = document.getElementById("profilePicInput");
+    const defaultUserIcon = document.getElementById("defaultUserIcon");
+
+    profilePicInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          defaultUserIcon.style.backgroundImage = `url(${e.target.result})`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function joinChat() {
+      const username = document.getElementById("usernameInput").value;
+      if (username.trim() === "") {
+        alert("Please enter a username.");
+        return;
+      }
+      document.getElementById("login").style.display = "none";
+      document.getElementById("chatroom").style.display = "block";
+      document.getElementById("currentUser").querySelector("span").textContent = username;
+    }
+
+    function leaveChat() {
+      document.getElementById("login").style.display = "block";
+      document.getElementById("chatroom").style.display = "none";
+    }
+
+    function showTypingIndicator() {
+      const typingIndicator = document.getElementById("typingIndicator");
+      typingIndicator.textContent = "You are typing...";
+      // You can add additional logic to hide this after a short delay
+      setTimeout(() => {
+        typingIndicator.textContent = "";
+      }, 2000); // Hide after 2 seconds of inactivity
+    }
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

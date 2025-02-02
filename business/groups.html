@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groups</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            text-align: center;
+            display: flex;
+        }
+        .contacts {
+            width: 250px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            height: 500px;
+            overflow-y: auto;
+        }
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            height: 500px;
+            overflow-y: auto;
+            margin-left: 20px;
+            background-color: #fff;
+        }
+        .header {
+            background-color: #0078D7;
+            color: white;
+            padding: 20px 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .btn {
+            background-color: #0078D7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #005A9E;
+        }
+        .input-box {
+            display: flex;
+            gap: 10px;
+        }
+        .input-box input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-box button {
+            padding: 10px 20px;
+            background-color: #0078D7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-box button:hover {
+            background-color: #005A9E;
+        }
+        .profile-form input, .profile-form button {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Groups</h1>
+    </div>
+    <div class="container">
+        <div id="profile-section" class="profile-form">
+            <h2>Create your profile</h2>
+            <input type="email" id="email" placeholder="Enter your email">
+            <input type="password" id="password" placeholder="Enter your password">
+            <input type="text" id="username" placeholder="Choose a username">
+            <input type="file" id="profile-pic" placeholder="Upload a profile picture">
+            <button id="save-profile">Save Profile</button>
+        </div>
+
+        <div class="contacts" id="contacts">
+            <h2>Your Contacts</h2>
+            <input type="text" id="search-bar" placeholder="Search online users">
+            <ul id="contact-list">
+                <!-- Contact list will be populated here -->
+            </ul>
+            <button id="create-group">Create Group</button>
+        </div>
+
+        <div class="chat-box" id="chat-box">
+            <h2>Your Group Chat</h2>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Chat messages will appear here -->
+            </div>
+            <div class="input-box">
+                <input type="text" id="chat-input" placeholder="Type a message...">
+                <button id="send-message">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const saveProfileButton = document.getElementById('save-profile');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const usernameInput = document.getElementById('username');
+        const profilePicInput = document.getElementById('profile-pic');
+        const contactsDiv = document.getElementById('contacts');
+        const contactList = document.getElementById('contact-list');
+        const searchBar = document.getElementById('search-bar');
+        const createGroupButton = document.getElementById('create-group');
+        const chatBox = document.getElementById('chat-box');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendMessageButton = document.getElementById('send-message');
+        let userProfile = JSON.parse(localStorage.getItem('userProfile')) || null;
+
+        // Function to save user profile to localStorage
+        saveProfileButton.addEventListener('click', () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            const username = usernameInput.value;
+            const profilePic = profilePicInput.files[0];
+
+            if (!email || !password || !username) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const profileData = {
+                email,
+                password,
+                username,
+                profilePic: profilePic ? URL.createObjectURL(profilePic) : null,
+            };
+
+            localStorage.setItem('userProfile', JSON.stringify(profileData));
+            userProfile = profileData;
+
+            emailInput.disabled = true;
+            passwordInput.disabled = true;
+            usernameInput.disabled = true;
+            profilePicInput.disabled = true;
+            saveProfileButton.disabled = true;
+
+            renderContacts();
+        });
+
+        // Render user profile
+        function renderProfile() {
+            if (userProfile) {
+                const { username, profilePic } = userProfile;
+                contactsDiv.innerHTML = `
+                    <h2>Welcome, ${username}</h2>
+                    <img src="${profilePic || 'https://via.placeholder.com/150'}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
+                `;
+            }
+        }
+
+        // Function to render contacts
+        function renderContacts() {
+            const onlineUsers = [
+                { username: 'John', status: 'online' },
+                { username: 'Sarah', status: 'offline' },
+                { username: 'Mike', status: 'online' },
+            ];
+
+            contactList.innerHTML = onlineUsers.map(user => `
+                <li>
+                    <span>${user.username}</span> - <span>${user.status}</span>
+                </li>
+            `).join('');
+        }
+
+        // Filter contacts based on search
+        searchBar.addEventListener('input', () => {
+            const searchTerm = searchBar.value.toLowerCase();
+            const filteredUsers = [
+                { username: 'John', status: 'online' },
+                { username: 'Sarah', status: 'offline' },
+                { username: 'Mike', status: 'online' },
+            ].filter(user => user.username.toLowerCase().includes(searchTerm));
+
+            contactList.innerHTML = filteredUsers.map(user => `
+                <li>
+                    <span>${user.username}</span> - <span>${user.status}</span>
+                </li>
+            `).join('');
+        });
+
+        // Function to handle message sending
+        sendMessageButton.addEventListener('click', () => {
+            const message = chatInput.value.trim();
+            if (message) {
+                const messageElem = document.createElement('div');
+                messageElem.textContent = `You: ${message}`;
+                chatMessages.appendChild(messageElem);
+                chatInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+
+        // Function to create a group
+        createGroupButton.addEventListener('click', () => {
+            const groupName = prompt('Enter group name:');
+            if (groupName) {
+                alert(`Group "${groupName}" created!`);
+            }
+        });
+
+        renderProfile();
+    </script>
+</body>
+</html>

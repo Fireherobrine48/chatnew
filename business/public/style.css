@@ -1,0 +1,175 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #00c3ff, #ffffff);
+  background-attachment: fixed; /* For a consistent look during scrolling */
+  background-repeat: no-repeat; /* Prevent pattern repetition */
+  background-size: cover; /* Ensure it fills the entire screen */
+}
+
+#login {
+  text-align: center;
+  margin-top: 100px;
+  background: linear-gradient(to bottom, #bef1f8, #d8e9f5); /* Different gradient for the login section */
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 50px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 600px;
+  margin: 100px auto;
+}
+
+#chatroom {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  background: linear-gradient(to bottom, #3a6ea5, #2b507e);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #145569;
+}
+
+.header h2 {
+  margin: 0;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.header #userCount,
+.header #currentUser {
+  font-size: 14px;
+  color: #d9ecff;
+}
+
+#chat {
+  flex: 1;
+  overflow-y: auto;
+  background: linear-gradient(to bottom, #218ec9, #ffffff);
+  padding: 10px;
+  border: 1px solid #0085dd;
+  border-radius: 5px;
+}
+
+#messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: flex-start;
+}
+
+.message.system {
+  background: linear-gradient(to bottom, #47666e, #3b5d64);
+  color: #0073e6;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #80cfe0;
+}
+
+.message.user {
+  background: linear-gradient(to bottom, #f8f8f8, #e1e1e1);
+  border: 1px solid #ccc;
+}
+
+.message .username {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.message .profile-pic {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border: 2px solid hsl(0, 0.00%, 100.00%);
+}
+
+.message.system .profile-pic {
+  background-image: url('https://cdn.pixabay.com/photo/2024/05/24/16/20/processor-8785387_640.jpg');
+  background-size: cover;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: linear-gradient(to bottom, #b9d5e0, #9fcbd3);
+  border-top: 1px solid #aacde4;
+  box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#messageInput {
+  flex: 1;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #aacde4;
+  border-radius: 10px;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background: linear-gradient(to bottom, #41bbda, #28b1a5);
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 16px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+  background: linear-gradient(to bottom, #5c95ac, #26aadf);
+}
+
+button:active {
+  background: linear-gradient(to bottom, #30a2c5, #25aadf);
+}
+
+button:last-child {
+  margin-right: 0;
+}
+
+button.squircle {
+  border-radius: 15px;
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 10px;
+}
+
+input[type="file"] {
+  margin-top: 10px;
+  border: 1px solid #aacde4;
+  border-radius: 5px;
+  padding: 5px;
+  background: #f4f9fc;
+}
+
+select {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #aacde4;
+  background: #eef5fb;
+}
