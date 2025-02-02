@@ -1,0 +1,13 @@
+{
+  "name": "business",
+  "version": "1.0.0",
+  "description": "Privacy Policy for Paxi Chat Alpha 1.0\r Effective Date: [22/01/25]",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
